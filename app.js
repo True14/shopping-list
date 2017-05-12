@@ -58,13 +58,21 @@ const editItem = (state, itemIndex, title) => {
 
 
 //Render functions
+const checkDone = (item, element) => {
+  if(item.done){
+    element.find('.shopping-item').toggleClass('shopping-item__checked');
+  }
+}
+
 const searchItem = (state,element, value) => {
   const itemsHTML = state.items.map(item => {
     const toggle = $(listTemplate(item.name));
     if(item.name.includes(value)) {
+      checkDone(item, toggle);
       toggle.show();
     }
     else if(value === '*'){
+      checkDone(item, toggle);
       toggle.show();
     }
     else {
@@ -75,14 +83,15 @@ const searchItem = (state,element, value) => {
 
    element.html(itemsHTML);
 }
+
 const toggleHidden = (state, element, condition) => {
   const itemsHTML = state.items.map(item => {
     const toggle = $(listTemplate(item.name));
     if(item.done && condition) {
       toggle.hide();
     }
-    else if(item.done && !condition) {
-      toggle.find('.shopping-item').toggleClass('shopping-item__checked');
+    else if(!condition) {
+      checkDone(item, toggle);
       toggle.show();
     }
     return toggle;
@@ -94,7 +103,7 @@ const toggleHidden = (state, element, condition) => {
 const renderItem = item => {
   const food = $(listTemplate(item.name));
   if(item.done){
-    food.find('.shopping-item').toggleClass('shopping-item__checked');
+    checkDone(item, food);
   }
   return food;
 
@@ -155,7 +164,6 @@ const eventListeners = state => {
 }
 
 $(() => {
-
   eventListeners(appState);
   renderList(appState, $('.shopping-list'));
 })
